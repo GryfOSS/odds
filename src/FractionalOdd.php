@@ -15,27 +15,12 @@ final class FractionalOdd extends Odd
     private const ALLOWED_FRACTION_BARS = ['/', '-'];
 
     /**
-     * @var int
-     */
-    private $numerator;
-
-    /**
-     * @var int
-     */
-    private $denominator;
-
-    /**
-     * @var string
-     */
-    private $fractionBar;
-
-    /**
      * @param int $numerator
      * @param int $denominator
      * @param string $fractionBar
      * @throws \InvalidArgumentException
      */
-    public function __construct(int $numerator, int $denominator, string $fractionBar = '/')
+    public function __construct(private int $numerator, private int $denominator, private string $fractionBar = '/')
     {
         if ($numerator < self::MIN_NUMERATOR) {
             throw new \InvalidArgumentException('Invalid numerator provided');
@@ -48,10 +33,6 @@ final class FractionalOdd extends Odd
         if (!\in_array($fractionBar, self::ALLOWED_FRACTION_BARS, true)) {
             throw new \InvalidArgumentException('Invalid fraction bar provided');
         }
-
-        $this->numerator = $numerator;
-        $this->denominator = $denominator;
-        $this->fractionBar = $fractionBar;
     }
 
     /**
@@ -69,9 +50,8 @@ final class FractionalOdd extends Odd
     public function toDecimal(): DecimalOdd
     {
         $value = $this->numerator / $this->denominator + 1.0;
-        $value = round($value, self::DECIMAL_PRECISION);
 
-        return new DecimalOdd($value);
+        return new DecimalOdd(round($value, self::DECIMAL_PRECISION));
     }
 
     /**
@@ -95,8 +75,6 @@ final class FractionalOdd extends Odd
             $value = -100 / $value;
         }
 
-        $value = round($value, self::DECIMAL_PRECISION);
-
-        return new MoneylineOdd($value);
+        return new MoneylineOdd(round($value, self::DECIMAL_PRECISION));
     }
 }

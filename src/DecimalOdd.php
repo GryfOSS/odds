@@ -11,23 +11,16 @@ final class DecimalOdd extends Odd
     private const MIN_VALUE = 1.0;
 
     /**
-     * @var float
-     */
-    private $value;
-
-    /**
      * @param float $value
      * @throws \InvalidArgumentException
      */
-    public function __construct(float $value)
+    public function __construct(private float $value)
     {
         if ($value < self::MIN_VALUE) {
             throw new \InvalidArgumentException('Invalid value provided');
         }
 
         $value = round($value, self::DECIMAL_PRECISION);
-
-        $this->value = $value;
     }
 
     /**
@@ -92,8 +85,6 @@ final class DecimalOdd extends Odd
             $value = -100 / ($this->value - 1);
         }
 
-        $value = round($value, self::DECIMAL_PRECISION);
-
-        return new MoneylineOdd($value);
+        return new MoneylineOdd(round($value, self::DECIMAL_PRECISION));
     }
 }
