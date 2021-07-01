@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 class FractionalOddTest extends TestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectException \InvalidArgumentException
      */
     public function testInvalidArgumentException() : void
     {

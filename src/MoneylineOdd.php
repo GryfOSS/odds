@@ -11,16 +11,10 @@ final class MoneylineOdd extends Odd
     private const PLUS_SIGN = '+';
 
     /**
-     * @var float
-     */
-    private $value;
-
-    /**
      * @param float $value
      */
-    public function __construct(float $value)
+    public function __construct(private float $value)
     {
-        $this->value = $value;
     }
 
     /**
@@ -51,9 +45,7 @@ final class MoneylineOdd extends Odd
             $value = -100 / $this->value + 1;
         }
 
-        $value = round($value, self::DECIMAL_PRECISION);
-
-        return new DecimalOdd($value);
+        return new DecimalOdd(round($value, self::DECIMAL_PRECISION));
     }
 
     /**
