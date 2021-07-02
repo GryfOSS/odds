@@ -14,10 +14,28 @@ class FractionalOddTest extends TestCase
     /**
      * @expectException \InvalidArgumentException
      */
-    public function testInvalidArgumentException() : void
+    public function testDenominatorException() : void
     {
         $this->expectException(\InvalidArgumentException::class);
         new FractionalOdd(1, 0);
+    }
+
+    /**
+     * @expectException \InvalidArgumentException
+     */
+    public function testNumeratorException() : void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new FractionalOdd(-1, 1);
+    }
+
+    /**
+     * @expectException \InvalidArgumentException
+     */
+    public function testFractionBarException() : void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new FractionalOdd(1, 1, ',');
     }
 
     public function testValue() : void
