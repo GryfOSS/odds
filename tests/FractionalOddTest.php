@@ -1,20 +1,21 @@
 <?php
 
-namespace Alexsabdev\Odds\Tests;
+declare(strict_types=1);
 
-use Alexsabdev\Odds\FractionalOdd;
+namespace Praetorian\Tests\Formatter\Odds\Tests;
+
 use PHPUnit\Framework\TestCase;
+use Praetorian\Formatter\Odds\FractionalOdd;
 
 /**
- * Class FractionalOddTest
- * @package Alexsabdev\Odds\Tests
+ * Class FractionalOddTest.
  */
 class FractionalOddTest extends TestCase
 {
     /**
      * @expectException \InvalidArgumentException
      */
-    public function testDenominatorException() : void
+    public function testDenominatorException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new FractionalOdd(1, 0);
@@ -23,7 +24,7 @@ class FractionalOddTest extends TestCase
     /**
      * @expectException \InvalidArgumentException
      */
-    public function testNumeratorException() : void
+    public function testNumeratorException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new FractionalOdd(-1, 1);
@@ -32,13 +33,13 @@ class FractionalOddTest extends TestCase
     /**
      * @expectException \InvalidArgumentException
      */
-    public function testFractionBarException() : void
+    public function testFractionBarException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new FractionalOdd(1, 1, ',');
     }
 
-    public function testValue() : void
+    public function testValue(): void
     {
         $odd = new FractionalOdd(2, 1);
         $this->assertEquals('2/1', $odd->value());
@@ -47,21 +48,21 @@ class FractionalOddTest extends TestCase
         $this->assertEquals('2-1', $odd->value());
     }
 
-    public function testToDecimal() : void
+    public function testToDecimal(): void
     {
         $oddFractional = new FractionalOdd(2, 1);
         $oddDecimal = $oddFractional->toDecimal();
         $this->assertEquals(3.0, $oddDecimal->value());
     }
 
-    public function testToFractional() : void
+    public function testToFractional(): void
     {
         $odd = new FractionalOdd(2, 1);
         $odd2 = $odd->toFractional();
         $this->assertEquals('2/1', $odd2->value());
     }
 
-    public function testToMoneyline() : void
+    public function testToMoneyline(): void
     {
         $oddFractional = new FractionalOdd(0, 1);
         $oddMoneyline = $oddFractional->toMoneyline();

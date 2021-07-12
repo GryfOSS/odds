@@ -1,10 +1,11 @@
 <?php
 
-namespace Alexsabdev\Odds;
+declare(strict_types=1);
+
+namespace Praetorian\Formatter\Odds;
 
 /**
- * Class FractionalOdd
- * @package Alexsabdev\Odds
+ * Class FractionalOdd.
  */
 final class FractionalOdd extends Odd
 {
@@ -15,9 +16,10 @@ final class FractionalOdd extends Odd
     private const ALLOWED_FRACTION_BARS = ['/', '-'];
 
     /**
-     * @param int $numerator
-     * @param int $denominator
+     * @param int    $numerator
+     * @param int    $denominator
      * @param string $fractionBar
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct(private int $numerator, private int $denominator, private string $fractionBar = '/')
@@ -35,16 +37,12 @@ final class FractionalOdd extends Odd
         }
     }
 
-    /**
-     * @return string
-     */
-    public function value() : string
+    public function value(): string
     {
-        return $this->numerator . $this->fractionBar . $this->denominator;
+        return $this->numerator.$this->fractionBar.$this->denominator;
     }
 
     /**
-     * @return DecimalOdd
      * @throws \InvalidArgumentException
      */
     public function toDecimal(): DecimalOdd
@@ -54,17 +52,11 @@ final class FractionalOdd extends Odd
         return new DecimalOdd(round($value, self::DECIMAL_PRECISION));
     }
 
-    /**
-     * @return FractionalOdd
-     */
     public function toFractional(): FractionalOdd
     {
         return $this;
     }
 
-    /**
-     * @return MoneylineOdd
-     */
     public function toMoneyline(): MoneylineOdd
     {
         $value = $this->numerator / $this->denominator;

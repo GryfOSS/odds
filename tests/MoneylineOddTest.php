@@ -1,17 +1,18 @@
 <?php
 
-namespace Alexsabdev\Odds\Tests;
+declare(strict_types=1);
 
-use Alexsabdev\Odds\MoneylineOdd;
+namespace Praetorian\Tests\Formatter\Odds\Tests;
+
 use PHPUnit\Framework\TestCase;
+use Praetorian\Formatter\Odds\MoneylineOdd;
 
 /**
- * Class MoneylineOddTest
- * @package Alexsabdev\Odds\Tests
+ * Class MoneylineOddTest.
  */
 class MoneylineOddTest extends TestCase
 {
-    public function testValue() : void
+    public function testValue(): void
     {
         $odd = new MoneylineOdd(-150.5);
         $this->assertEquals('-150.5', $odd->value());
@@ -20,7 +21,7 @@ class MoneylineOddTest extends TestCase
         $this->assertEquals('+150.5', $odd->value());
     }
 
-    public function testToDecimal() : void
+    public function testToDecimal(): void
     {
         $oddMoneyline = new MoneylineOdd(0.0);
         $oddDecimal = $oddMoneyline->toDecimal();
@@ -39,7 +40,7 @@ class MoneylineOddTest extends TestCase
         $this->assertEquals(1.5, $oddDecimal->value());
     }
 
-    public function testToFractional() : void
+    public function testToFractional(): void
     {
         $oddMoneyline = new MoneylineOdd(0.0);
         $oddFractional = $oddMoneyline->toFractional();
@@ -54,7 +55,7 @@ class MoneylineOddTest extends TestCase
         $this->assertEquals('2/1', $oddFractional->value());
     }
 
-    public function testToMoneyline() : void
+    public function testToMoneyline(): void
     {
         $odd = new MoneylineOdd(200);
         $odd2 = $odd->toMoneyline();

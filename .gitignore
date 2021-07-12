@@ -2,3 +2,7 @@
 /.idea
 .env
 .php_cs.cache
+coverage.txt
+/report
+*.cache
+composer.lock

@@ -1,10 +1,11 @@
 <?php
 
-namespace Alexsabdev\Odds;
+declare(strict_types=1);
+
+namespace Praetorian\Formatter\Odds;
 
 /**
- * Class Odd
- * @package Alexsabdev\Odds
+ * Class Odd.
  */
 abstract class Odd implements OddInterface
 {

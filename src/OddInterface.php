@@ -1,10 +1,11 @@
 <?php
 
-namespace Alexsabdev\Odds;
+declare(strict_types=1);
+
+namespace Praetorian\Formatter\Odds;
 
 /**
- * Interface OddInterface
- * @package Alexsabdev\Odds
+ * Interface OddInterface.
  */
 interface OddInterface
 {
@@ -13,18 +14,9 @@ interface OddInterface
      */
     public function value();
 
-    /**
-     * @return DecimalOdd
-     */
-    public function toDecimal() : DecimalOdd;
+    public function toDecimal(): DecimalOdd;
 
-    /**
-     * @return FractionalOdd
-     */
-    public function toFractional() : FractionalOdd;
+    public function toFractional(): FractionalOdd;
 
-    /**
-     * @return MoneylineOdd
-     */
-    public function toMoneyline() : MoneylineOdd;
+    public function toMoneyline(): MoneylineOdd;
 }

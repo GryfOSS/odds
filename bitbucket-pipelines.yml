@@ -1,0 +1,17 @@
+image: php:8.0
+
+pipelines:
+    branches:
+        master:
+            - step:
+                  script:
+                      - apt-get update && apt-get install -y curl git libhiredis-dev libzip-dev zip
+                      - pecl install igbinary xdebug
+                      - docker-php-ext-install zip
+                      - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+                      - git clone https://github.com/nrk/phpiredis.git && cd phpiredis && phpize && ./configure --enable-phpiredis && make && make install && cd ..
+                      - docker-php-ext-enable phpiredis igbinary zip xdebug
+                      - composer install
+                      - XDEBUG_MODE=coverage composer test
+                      - COVERAGE=`cat coverage.txt`
+                      - echo $COVERAGE

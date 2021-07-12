@@ -1,10 +1,11 @@
 <?php
 
-namespace Alexsabdev\Odds;
+declare(strict_types=1);
+
+namespace Praetorian\Formatter\Odds;
 
 /**
- * Class DecimalOdd
- * @package Alexsabdev\Odds
+ * Class DecimalOdd.
  */
 final class DecimalOdd extends Odd
 {
@@ -12,6 +13,7 @@ final class DecimalOdd extends Odd
 
     /**
      * @param float $value
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct(private float $value)
@@ -23,30 +25,22 @@ final class DecimalOdd extends Odd
         $value = round($value, self::DECIMAL_PRECISION);
     }
 
-    /**
-     * @return float
-     */
-    public function value() : float
+    public function value(): float
     {
         return $this->value;
     }
 
-    /**
-     * @return DecimalOdd
-     */
     public function toDecimal(): DecimalOdd
     {
         return $this;
     }
 
     /**
-     * @param float $tolerance
-     * @return FractionalOdd
      * @throws \InvalidArgumentException
      */
     public function toFractional(float $tolerance = 1.e-6): FractionalOdd
     {
-        if ($this->value === 1.0) {
+        if (1.0 === $this->value) {
             return new FractionalOdd(0, 1);
         }
 
@@ -69,15 +63,12 @@ final class DecimalOdd extends Odd
             $b -= $a;
         } while (\abs($v - $n / $d) > $v * $tolerance);
 
-        return new FractionalOdd($n, $d);
+        return new FractionalOdd(intval($n), intval($d));
     }
 
-    /**
-     * @return MoneylineOdd
-     */
     public function toMoneyline(): MoneylineOdd
     {
-        if ($this->value === 1.0) {
+        if (1.0 === $this->value) {
             $value = 0;
         } elseif ($this->value >= 2) {
             $value = 100 * ($this->value - 1);

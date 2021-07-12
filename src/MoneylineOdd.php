@@ -1,10 +1,11 @@
 <?php
 
-namespace Alexsabdev\Odds;
+declare(strict_types=1);
+
+namespace Praetorian\Formatter\Odds;
 
 /**
- * Class MoneylineOdd
- * @package Alexsabdev\Odds
+ * Class MoneylineOdd.
  */
 final class MoneylineOdd extends Odd
 {
@@ -17,10 +18,7 @@ final class MoneylineOdd extends Odd
     {
     }
 
-    /**
-     * @return string
-     */
-    public function value() : string
+    public function value(): string
     {
         $sign = '';
 
@@ -28,11 +26,10 @@ final class MoneylineOdd extends Odd
             $sign = self::PLUS_SIGN;
         }
 
-        return $sign . $this->value;
+        return $sign.$this->value;
     }
 
     /**
-     * @return DecimalOdd
      * @throws \InvalidArgumentException
      */
     public function toDecimal(): DecimalOdd
@@ -49,13 +46,11 @@ final class MoneylineOdd extends Odd
     }
 
     /**
-     * @param float $tolerance
-     * @return FractionalOdd
      * @throws \InvalidArgumentException
      */
     public function toFractional(float $tolerance = 1.e-6): FractionalOdd
     {
-        if ($this->value === 0.0) {
+        if (0.0 === $this->value) {
             return new FractionalOdd(0, 1);
         }
 
@@ -83,12 +78,9 @@ final class MoneylineOdd extends Odd
             $b -= $a;
         } while (\abs($v - $n / $d) > $v * $tolerance);
 
-        return new FractionalOdd($n, $d);
+        return new FractionalOdd(intval($n), intval($d));
     }
 
-    /**
-     * @return MoneylineOdd
-     */
     public function toMoneyline(): MoneylineOdd
     {
         return $this;
