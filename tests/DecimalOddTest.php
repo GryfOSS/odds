@@ -26,7 +26,7 @@ class DecimalOddTest extends TestCase
         $this->assertEquals(1.5, $odd->value());
     }
 
-    public function toDecimal() : void
+    public function testToDecimal() : void
     {
         $odd = new DecimalOdd(1.5);
         $odd2 = $odd->toDecimal();
