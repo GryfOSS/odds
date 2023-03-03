@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Praetorian\Formatter\Odds;
 
+use Praetorian\Formatter\Odds\Utils\OddsLadder;
+
 /**
  * Class DecimalOdd.
  */
@@ -38,8 +40,12 @@ final class DecimalOdd extends Odd
     /**
      * @throws \InvalidArgumentException
      */
-    public function toFractional(float $tolerance = 1.e-6): FractionalOdd
+    public function toFractional(float $tolerance = 1.e-6, bool $useOddsLadder = true): FractionalOdd
     {
+        if ($useOddsLadder) {
+            return OddsLadder::decimalToFractional($this);
+        }
+
         if (1.0 === $this->value) {
             return new FractionalOdd(0, 1);
         }
