@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorian\Formatter\Odds;
 
+use Praetorian\Formatter\Odds\Exception\InvalidPriceException;
 use Praetorian\Formatter\Odds\Utils\OddsLadder;
 
 /**
@@ -16,12 +17,12 @@ final class DecimalOdd extends Odd
     /**
      * @param float $value
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidPriceException
      */
     public function __construct(private float $value)
     {
         if ($value < self::MIN_VALUE) {
-            throw new \InvalidArgumentException('Invalid value provided');
+            throw new InvalidPriceException(sprintf('Invalid value provided: %F. Min value: %F', $value, self::MIN_VALUE));
         }
 
         $value = round($value, self::DECIMAL_PRECISION);

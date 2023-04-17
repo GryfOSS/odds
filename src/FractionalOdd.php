@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Praetorian\Formatter\Odds;
 
+use Praetorian\Formatter\Odds\Exception\InvalidPriceException;
+
 /**
  * Class FractionalOdd.
  */
@@ -43,7 +45,7 @@ final class FractionalOdd extends Odd
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws InvalidPriceException
      */
     public function toDecimal(): DecimalOdd
     {
