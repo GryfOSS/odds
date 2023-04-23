@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Praetorian\Formatter\Odds;
 
+use Praetorian\Formatter\Odds\Exception\InvalidPriceException;
 use Praetorian\Formatter\Odds\Utils\OddsLadder;
 
 /**
@@ -32,7 +33,7 @@ final class MoneylineOdd extends Odd
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws InvalidPriceException
      */
     public function toDecimal(): DecimalOdd
     {
