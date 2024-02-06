@@ -21,7 +21,7 @@ class OddsLadder
 
     private static function decimalToFractionalString(DecimalOdd $decimalOdd): string
     {
-        $decimalValue = new Decimal((string) $decimalOdd->value());
+        $decimalValue = (string) $decimalOdd->value();
 
         $ladder = [
             '1.02' => '1/100',
@@ -101,11 +101,11 @@ class OddsLadder
         ];
 
         foreach ($ladder as $threshold => $value) {
-            if ($decimalValue < new Decimal($threshold)) {
+            if (bccomp($decimalValue, $threshold) < 0) {
                 return $value;
             }
         }
 
-        return sprintf('%d/1', $decimalValue->sub('0.5')->toInt());
+        return sprintf('%d/1', intval(bcsub($decimalValue, '0.5', 0)));
     }
 }
