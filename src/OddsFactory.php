@@ -12,6 +12,7 @@ use Praetorian\Formatter\Odds\Exception\InvalidPriceException;
 final class OddsFactory
 {
     private const DECIMAL_PRECISION = 2;
+    private const SCALE_FACTOR = 100; // For integer calculations
 
     public function __construct(
         private ?OddsLadderInterface $oddsLadder = null
@@ -26,15 +27,15 @@ final class OddsFactory
      */
     public function fromDecimal(string $decimal): Odds
     {
-        if (!is_numeric($decimal) || bccomp($decimal, '1.0', self::DECIMAL_PRECISION) < 0) {
+        if (!is_numeric($decimal) || (float)$decimal < 1.0) {
             throw new InvalidPriceException(sprintf('Invalid decimal value provided: %s. Min value: 1.0', $decimal));
         }
 
-        $decimal = bcadd($decimal, '0', self::DECIMAL_PRECISION); // Normalize precision
-        $fractional = $this->decimalToFractional($decimal);
-        $moneyline = $this->decimalToMoneyline($decimal);
+        $normalizedDecimal = $this->normalizeDecimal($decimal);
+        $fractional = $this->decimalToFractional($normalizedDecimal);
+        $moneyline = $this->decimalToMoneyline($normalizedDecimal);
 
-        return new Odds($decimal, $fractional, $moneyline);
+        return new Odds($normalizedDecimal, $fractional, $moneyline);
     }
 
     /**
@@ -55,7 +56,9 @@ final class OddsFactory
         }
 
         // decimal = (numerator / denominator) + 1
-        $decimal = bcadd(bcdiv((string)$numerator, (string)$denominator, 10), '1', self::DECIMAL_PRECISION);
+        // Using integer math: ((numerator * SCALE_FACTOR) / denominator) + SCALE_FACTOR
+        $decimalInt = (int)round(($numerator * self::SCALE_FACTOR) / $denominator) + self::SCALE_FACTOR;
+        $decimal = $this->intToString($decimalInt);
         $fractional = $numerator . '/' . $denominator;
         $moneyline = $this->decimalToMoneyline($decimal);
 
@@ -97,28 +100,30 @@ final class OddsFactory
     /**
      * Default decimal to fractional conversion (without odds ladder).
      */
-    private function defaultDecimalToFractional(string $decimal, string $tolerance = '0.000001'): string
+    private function defaultDecimalToFractional(string $decimal, int $tolerance = 1): string
     {
-        if (bccomp($decimal, '1.0', self::DECIMAL_PRECISION) === 0) {
+        $decimalInt = $this->stringToInt($decimal);
+
+        if ($decimalInt === self::SCALE_FACTOR) { // 1.00
             return '0/1';
         }
 
-        // v = decimal - 1
-        $v = bcsub($decimal, '1', 10);
-        
-        // For very precise calculations with continued fractions
-        // Converting to float temporarily for the algorithm, but we'll validate the result
-        $vFloat = floatval($v);
+        // v = decimal - 1 (in integer form)
+        $vInt = $decimalInt - self::SCALE_FACTOR;
+
+        // Convert to float for continued fractions algorithm
+        $v = $vInt / self::SCALE_FACTOR;
+        $toleranceFloat = $tolerance / (self::SCALE_FACTOR * self::SCALE_FACTOR);
+
         $n = 1;
         $n2 = 0;
         $d = 0;
         $d2 = 1;
-        $b = 1 / $vFloat;
-        $toleranceFloat = floatval($tolerance);
+        $b = 1 / $v;
 
         do {
             $b = 1 / $b;
-            $a = \floor($b);
+            $a = floor($b);
             $aux = $n;
             $n = $a * $n + $n2;
             $n2 = $aux;
@@ -126,7 +131,7 @@ final class OddsFactory
             $d = $a * $d + $d2;
             $d2 = $aux;
             $b -= $a;
-        } while (\abs($vFloat - $n / $d) > $vFloat * $toleranceFloat);
+        } while (abs($v - $n / $d) > $v * $toleranceFloat);
 
         return intval($n) . '/' . intval($d);
     }
@@ -136,16 +141,21 @@ final class OddsFactory
      */
     private function decimalToMoneyline(string $decimal): string
     {
-        if (bccomp($decimal, '1.0', self::DECIMAL_PRECISION) === 0) {
+        $decimalInt = $this->stringToInt($decimal);
+
+        if ($decimalInt === self::SCALE_FACTOR) { // 1.00
             return $this->formatMoneyline('0');
         }
-        
-        if (bccomp($decimal, '2.0', self::DECIMAL_PRECISION) >= 0) {
+
+        if ($decimalInt >= 2 * self::SCALE_FACTOR) { // >= 2.00
             // value = 100 * (decimal - 1)
-            $value = bcmul('100', bcsub($decimal, '1', 10), self::DECIMAL_PRECISION);
+            $valueInt = ($decimalInt - self::SCALE_FACTOR) * 100 / self::SCALE_FACTOR;
+            $value = number_format($valueInt, self::DECIMAL_PRECISION, '.', '');
         } else {
             // value = -100 / (decimal - 1)
-            $value = bcdiv('-100', bcsub($decimal, '1', 10), self::DECIMAL_PRECISION);
+            $divisor = ($decimalInt - self::SCALE_FACTOR) / self::SCALE_FACTOR;
+            $valueFloat = -100 / $divisor;
+            $value = number_format($valueFloat, self::DECIMAL_PRECISION, '.', '');
         }
 
         return $this->formatMoneyline($value);
@@ -156,17 +166,19 @@ final class OddsFactory
      */
     private function moneylineToDecimal(string $moneyline): string
     {
-        $value = '1';
+        $moneylineFloat = (float)$moneyline;
 
-        if (bccomp($moneyline, '0', self::DECIMAL_PRECISION) > 0) {
+        if ($moneylineFloat > 0) {
             // value = moneyline / 100 + 1
-            $value = bcadd(bcdiv($moneyline, '100', 10), '1', self::DECIMAL_PRECISION);
-        } elseif (bccomp($moneyline, '0', self::DECIMAL_PRECISION) < 0) {
+            $valueInt = (int)round(($moneylineFloat / 100 + 1) * self::SCALE_FACTOR);
+        } elseif ($moneylineFloat < 0) {
             // value = -100 / moneyline + 1
-            $value = bcadd(bcdiv('-100', $moneyline, 10), '1', self::DECIMAL_PRECISION);
+            $valueInt = (int)round((-100 / $moneylineFloat + 1) * self::SCALE_FACTOR);
+        } else {
+            $valueInt = self::SCALE_FACTOR; // 1.00
         }
 
-        return $value;
+        return $this->intToString($valueInt);
     }
 
     /**
@@ -174,18 +186,45 @@ final class OddsFactory
      */
     private function formatMoneyline(string $value): string
     {
+        $valueFloat = (float)$value;
         $sign = '';
 
-        if (bccomp($value, '0', self::DECIMAL_PRECISION) > 0) {
+        if ($valueFloat > 0) {
             $sign = '+';
         }
 
         // Remove unnecessary decimal places if the value is a whole number
-        $intValue = bcadd($value, '0', 0); // Round to integer
-        if (bccomp($value, $intValue, self::DECIMAL_PRECISION) === 0) {
-            return $sign . $intValue;
+        if ($valueFloat == intval($valueFloat)) {
+            return $sign . intval($valueFloat);
         }
 
-        return $sign . $value;
+        return $sign . number_format($valueFloat, self::DECIMAL_PRECISION, '.', '');
+    }
+
+    /**
+     * Normalize decimal string to 2 decimal places.
+     */
+    private function normalizeDecimal(string $decimal): string
+    {
+        $decimalInt = $this->stringToInt($decimal);
+        return $this->intToString($decimalInt);
+    }
+
+    /**
+     * Convert string decimal to integer (multiply by 100).
+     * E.g., "2.50" -> 250
+     */
+    private function stringToInt(string $decimal): int
+    {
+        return (int)round((float)$decimal * self::SCALE_FACTOR);
+    }
+
+    /**
+     * Convert integer back to string decimal (divide by 100).
+     * E.g., 250 -> "2.50"
+     */
+    private function intToString(int $value): string
+    {
+        return number_format($value / self::SCALE_FACTOR, self::DECIMAL_PRECISION, '.', '');
     }
 }

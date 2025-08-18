@@ -46,7 +46,7 @@ $factory = new OddsFactory();
 $odds = $factory->fromDecimal('2.50');
 
 echo $odds->getDecimal();     // "2.50"
-echo $odds->getFractional();  // "3/2"  
+echo $odds->getFractional();  // "3/2"
 echo $odds->getMoneyline();   // "+150"
 echo $odds->getProbability(); // "40.00"
 ```
@@ -61,7 +61,7 @@ $factory = new OddsFactory();
 // From decimal
 $odds = $factory->fromDecimal('1.75');
 
-// From fractional  
+// From fractional
 $odds = $factory->fromFractional(3, 4);
 
 // From moneyline

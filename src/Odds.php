@@ -27,11 +27,11 @@ final class Odds
     public function __construct(string $decimal, string $fractional, string $moneyline)
     {
         // Validate decimal format
-        if (!is_numeric($decimal) || bccomp($decimal, '1.0', self::DECIMAL_PRECISION) < 0) {
+        if (!is_numeric($decimal) || (float)$decimal < 1.0) {
             throw new InvalidPriceException(sprintf('Invalid decimal value provided: %s. Min value: 1.0', $decimal));
         }
 
-        $this->decimal = bcadd($decimal, '0', self::DECIMAL_PRECISION); // Normalize precision
+        $this->decimal = $this->normalizeDecimal($decimal);
         $this->fractional = $fractional;
         $this->moneyline = $moneyline;
         $this->probability = $this->calculateProbability($this->decimal);
@@ -70,16 +70,45 @@ final class Odds
     }
 
     /**
-     * Calculate probability from decimal odds.
+     * Calculate the implied probability from decimal odds.
+     * Returns as percentage string (e.g., "40.00")
      */
     private function calculateProbability(string $decimal): string
     {
-        if (bccomp($decimal, '0', self::DECIMAL_PRECISION) <= 0) {
-            throw new InvalidPriceException('Decimal odds must be greater than 0');
-        }
+        // Convert to float for precise calculation
+        $decimalFloat = (float)$decimal;
 
-        // probability = 1 / decimal odds
-        // Using bcmath for precision: 1 / decimal * 100 for percentage
-        return bcmul(bcdiv('1', $decimal, 10), '100', self::DECIMAL_PRECISION);
+        // probability = 1 / decimal odds * 100 (for percentage)
+        $probabilityFloat = (1 / $decimalFloat) * 100;
+
+        // Return with 2 decimal places
+        return number_format($probabilityFloat, self::DECIMAL_PRECISION, '.', '');
+    }
+
+    /**
+     * Normalize decimal string to 2 decimal places.
+     */
+    private function normalizeDecimal(string $decimal): string
+    {
+        $decimalInt = $this->stringToInt($decimal);
+        return $this->intToString($decimalInt);
+    }
+
+    /**
+     * Convert string decimal to integer (multiply by 100).
+     * E.g., "2.50" -> 250
+     */
+    private function stringToInt(string $decimal): int
+    {
+        return (int)round((float)$decimal * self::SCALE_FACTOR);
+    }
+
+    /**
+     * Convert integer back to string decimal (divide by 100).
+     * E.g., 250 -> "2.50"
+     */
+    private function intToString(int $value): string
+    {
+        return number_format($value / self::SCALE_FACTOR, self::DECIMAL_PRECISION, '.', '');
     }
 }

@@ -12,16 +12,19 @@ use Praetorian\Formatter\Odds\OddsLadderInterface;
 class OddsLadder implements OddsLadderInterface
 {
     private const DECIMAL_PRECISION = 2;
+    private const SCALE_FACTOR = 100; // For integer calculations
 
     /**
      * Convert decimal odds to fractional using odds ladder lookup.
      */
     public function decimalToFractional(string $decimal): string
     {
+        $decimalInt = $this->stringToInt($decimal);
         $ladder = $this->getLadder();
 
         foreach ($ladder as $threshold => $value) {
-            if (bccomp($decimal, $threshold, self::DECIMAL_PRECISION) <= 0) {
+            $thresholdInt = $this->stringToInt($threshold);
+            if ($decimalInt <= $thresholdInt) {
                 return $value;
             }
         }
@@ -92,7 +95,26 @@ class OddsLadder implements OddsLadderInterface
     protected function fallbackConversion(string $decimal): string
     {
         // For high odds, return (decimal - 1)/1
-        $numerator = bcsub($decimal, '1', 0); // Round to integer
-        return $numerator . '/1';
+        $decimalInt = $this->stringToInt($decimal);
+        $numerator = ($decimalInt - self::SCALE_FACTOR) / self::SCALE_FACTOR;
+        return intval($numerator) . '/1';
+    }
+
+    /**
+     * Convert string decimal to integer (multiply by 100).
+     * E.g., "2.50" -> 250
+     */
+    protected function stringToInt(string $decimal): int
+    {
+        return (int)round((float)$decimal * self::SCALE_FACTOR);
+    }
+
+    /**
+     * Convert integer back to string decimal (divide by 100).
+     * E.g., 250 -> "2.50"
+     */
+    protected function intToString(int $value): string
+    {
+        return number_format($value / self::SCALE_FACTOR, self::DECIMAL_PRECISION, '.', '');
     }
 }

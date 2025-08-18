@@ -9,111 +9,109 @@ namespace Praetorian\Formatter\Odds;
  */
 class OddsLadder implements OddsLadderInterface
 {
+    private const DECIMAL_PRECISION = 2;
+    private const SCALE_FACTOR = 100; // For integer calculations
+
     /**
-     * Get the odds ladder lookup table.
+     * Convert decimal odds to fractional using odds ladder lookup.
+     */
+    public function decimalToFractional(string $decimal): string
+    {
+        $decimalInt = $this->stringToInt($decimal);
+        $ladder = $this->getLadder();
+
+        foreach ($ladder as $thresholdInt => $value) {
+            if ($decimalInt <= $thresholdInt) {
+                return $value;
+            }
+        }
+
+        // Fallback for high odds
+        return $this->fallbackConversion($decimal);
+    }
+
+    /**
+     * Get the odds ladder lookup table with integer keys.
      * Override this method in subclasses to provide custom ladder.
      */
     protected function getLadder(): array
     {
         return [
-            '1.02' => '1/100',
-            '1.03' => '1/50',
-            '1.04' => '1/33',
-            '1.06' => '1/20',
-            '1.11' => '1/10',
-            '1.12' => '1/9',
-            '1.13' => '1/8',
-            '1.14' => '1/7',
-            '1.17' => '1/6',
-            '1.21' => '1/5',
-            '1.25' => '2/9',
-            '1.28' => '1/4',
-            '1.30' => '2/7',
-            '1.33' => '3/10',
-            '1.35' => '1/3',
-            '1.40' => '4/11',
-            '1.43' => '2/5',
-            '1.45' => '4/9',
-            '1.47' => '9/20',
-            '1.50' => '40/85',
-            '1.53' => '1/2',
-            '1.57' => '8/15',
-            '1.60' => '4/7',
-            '1.62' => '3/5',
-            '1.64' => '8/13',
-            '1.66' => '5/8',
-            '1.70' => '4/6',
-            '1.72' => '7/10',
-            '1.80' => '8/11',
-            '1.91' => '4/5',
-            '1.95' => '10/11',
-            '2.00' => '20/21',
-            '2.05' => '1/1',
-            '2.10' => '21/20',
-            '2.20' => '11/10',
-            '2.25' => '6/5',
-            '2.30' => '5/4',
-            '2.38' => '13/10',
-            '2.40' => '11/8',
-            '2.50' => '7/5',
-            '2.60' => '6/4',
-            '2.63' => '8/5',
-            '2.70' => '13/8',
-            '2.75' => '17/10',
-            '2.80' => '7/4',
-            '2.88' => '9/5',
-            '2.90' => '15/8',
-            '3.00' => '19/10',
-            '3.10' => '2/1',
-            '3.13' => '21/10',
-            '3.20' => '85/40',
-            '3.38' => '11/5',
-            '3.40' => '95/40',
-            '3.50' => '12/5',
-            '3.60' => '5/2',
-            '3.75' => '13/5',
-            '3.80' => '11/4',
-            '4.00' => '14/5',
-            '4.20' => '3/1',
-            '4.33' => '16/5',
-            '4.50' => '100/30',
-            '4.60' => '7/2',
-            '5.00' => '18/5',
-            '5.50' => '4/1',
-            '6.00' => '9/2',
-            '6.50' => '5/1',
-            '7.00' => '11/2',
-            '7.50' => '6/1',
-            '8.00' => '13/2',
-            '8.50' => '7/1',
-            '9.00' => '15/2',
-            '9.50' => '8/1',
-            '10.0' => '17/2',
+            102 => '1/50',      // 1.02
+            103 => '1/33',      // 1.03
+            104 => '1/25',      // 1.04
+            105 => '1/20',      // 1.05
+            106 => '1/17',      // 1.06
+            107 => '1/15',      // 1.07
+            108 => '2/25',      // 1.08
+            109 => '1/12',      // 1.09
+            110 => '1/10',      // 1.10
+            111 => '1/9',       // 1.11
+            113 => '1/8',       // 1.13
+            114 => '1/7',       // 1.14
+            117 => '1/6',       // 1.17
+            120 => '1/5',       // 1.20
+            122 => '2/9',       // 1.22
+            125 => '1/4',       // 1.25
+            129 => '2/7',       // 1.29
+            133 => '1/3',       // 1.33
+            136 => '4/11',      // 1.36
+            140 => '2/5',       // 1.40
+            144 => '4/9',       // 1.44
+            150 => '1/2',       // 1.50
+            157 => '4/7',       // 1.57
+            162 => '8/13',      // 1.62
+            167 => '4/6',       // 1.67
+            173 => '8/11',      // 1.73
+            180 => '4/5',       // 1.80
+            191 => '10/11',     // 1.91
+            200 => '1/1',       // 2.00
+            210 => '11/10',     // 2.10
+            220 => '6/5',       // 2.20
+            238 => '11/8',      // 2.38
+            250 => '3/2',       // 2.50
+            262 => '8/5',       // 2.62
+            275 => '7/4',       // 2.75
+            300 => '2/1',       // 3.00
+            325 => '9/4',       // 3.25
+            350 => '5/2',       // 3.50
+            400 => '3/1',       // 4.00
+            450 => '7/2',       // 4.50
+            500 => '4/1',       // 5.00
+            600 => '5/1',       // 6.00
+            700 => '6/1',       // 7.00
+            800 => '7/1',       // 8.00
+            900 => '8/1',       // 9.00
+            1000 => '9/1',      // 10.00
         ];
     }
 
     /**
-     * Convert decimal to fractional using the ladder.
+     * Fallback conversion for odds not in the ladder.
      */
-    public function decimalToFractional(float $decimal): string
+    protected function fallbackConversion(string $decimal): string
     {
-        $decimalValue = (string) $decimal;
-        $ladder = $this->getLadder();
-
-        foreach ($ladder as $threshold => $value) {
-            if (bccomp($decimalValue, $threshold) < 0) {
-                return $value;
-            }
-        }
-
-        return $this->fallbackConversion($decimal);
+        // For high odds, return (decimal - 1)/1
+        $decimalInt = $this->stringToInt($decimal);
+        $numerator = ($decimalInt - self::SCALE_FACTOR) / self::SCALE_FACTOR;
+        return intval($numerator) . '/1';
     }
 
     /**
-     * Fallback conversion for values not found in the ladder.
+     * Convert string decimal to integer (multiply by 100).
+     * E.g., "2.50" -> 250
      */
-    protected function fallbackConversion(float $decimal): string
+    protected function stringToInt(string $decimal): int
     {
-        return sprintf('%d/1', intval(bcsub((string) $decimal, '0.5', 0)));
+        return (int)round((float)$decimal * self::SCALE_FACTOR);
+    }
+
+    /**
+     * Convert integer back to string decimal (divide by 100).
+     * E.g., 250 -> "2.50"
+     */
+    protected function intToString(int $value): string
+    {
+        return number_format($value / self::SCALE_FACTOR, self::DECIMAL_PRECISION, '.', '');
     }
 }
