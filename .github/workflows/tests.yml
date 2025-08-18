@@ -9,10 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        php-version: [8.1, 8.2, 8.3, 8.4]
+        php-version: [8.2, 8.3, 8.4]
 
     steps:
     - uses: actions/checkout@v4
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
     steps:
     - uses: actions/checkout@v4
 
@@ -106,7 +106,7 @@ jobs:
           echo number_format(\$percentage, 0);
         ")
         echo "Coverage: $COVERAGE%"
-        
+
         # Determine badge color based on coverage
         if [ "$COVERAGE" -eq 100 ]; then
           COLOR="brightgreen"
@@ -119,7 +119,7 @@ jobs:
         else
           COLOR="red"
         fi
-        
+
         # Create coverage badge URL
         BADGE_URL="https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR}"
         echo "COVERAGE_BADGE_URL=$BADGE_URL" >> $GITHUB_ENV

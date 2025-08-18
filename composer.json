@@ -6,14 +6,13 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Alex Sab",
-            "email": "alexsabdev@gmail.com",
-            "homepage": "https://github.com/alexsabdev",
+            "name": "IDCT Bartosz Pachołek",
+            "email": "bartosz+github@idct.tech",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.0"
+        "php": "^8.2"
     },
     "autoload": {
         "psr-4": {
