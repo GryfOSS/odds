@@ -1,5 +1,10 @@
 # Odds Formatter
 
+[![Tests](https://github.com/praetoriantechnology/odds-formatter/workflows/Tests/badge.svg?branch=new_api)](https://github.com/praetoriantechnology/odds-formatter/actions)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/praetoriantechnology/odds-formatter/actions)
+[![PHP Version](https://img.shields.io/badge/php-8.1%2B-blue)](https://php.net)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 PHP package for dealing with different formats of betting odds: decimal (European), fractional (British), and moneyline (American).
 
 ## 🚀 New Architecture (v2.0)
