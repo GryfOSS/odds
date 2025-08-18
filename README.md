@@ -1,57 +1,122 @@
-# odds [![Build Status](https://travis-ci.org/alexsabdev/odds.svg?branch=master)](https://travis-ci.org/alexsabdev/odds)
-PHP package for dealing with different formats of betting odds: decimal (European), fractional (British), and moneyline (American)
+# Odds Formatter
+
+PHP package for dealing with different formats of betting odds: decimal (European), fractional (British), and moneyline (American).
+
+## 🚀 New Architecture (v2.0)
+
+This library has been completely redesigned with:
+
+- **Immutable `Odds` class** containing all formats and probability
+- **`OddsFactory`** with dependency injection for conversion strategies
+- **String-based decimals** for precision and security (no more float issues!)
+- **bcmath calculations** for exact mathematical operations
+- **Extensible odds ladder system** via interfaces
 
 ## Features
-* Use classes of Decimal/fractional/moneyline odds
-* Convert values of odds (all directions)
+
+- ✅ **Precision**: String-based decimals with bcmath calculations
+- ✅ **Immutable design**: Thread-safe odds objects
+- ✅ **All-in-one**: Single object contains decimal, fractional, moneyline, and probability
+- ✅ **Dependency injection**: Configurable conversion strategies
+- ✅ **Extensible**: Custom odds ladder implementations
+- ✅ **Comprehensive**: Full test coverage
 
 ## Requirements
-* PHP 7.1+
-* Composer
+
+- PHP 8.0+
+- bcmath extension (standard in most installations)
+- Composer
 
 ## Installation
 
-* Require the package using Composer
 ```bash
-composer require alexsabdev/odds
+composer require praetoriantechnology/odds-formatter
 ```
 
-## Usage
+## Quick Start
 
-* Create an instance of any odd
 ```php
 require 'vendor/autoload.php';
 
-use Alexsabdev\Odds\DecimalOdd;
-...
+use Praetorian\Formatter\Odds\OddsFactory;
 
-$odd = new DecimalOdd(3.5);
+$factory = new OddsFactory();
+
+// Create from string decimal (secure, precise)
+$odds = $factory->fromDecimal('2.50');
+
+echo $odds->getDecimal();     // "2.50"
+echo $odds->getFractional();  // "3/2"  
+echo $odds->getMoneyline();   // "+150"
+echo $odds->getProbability(); // "40.00"
 ```
 
-* Show the value
+## Usage Examples
+
+### Basic Conversions
+
 ```php
-/**
-* Prints '3.5'
-*/
-$decimal = $odd->value();
-print_r($decimal);
+$factory = new OddsFactory();
+
+// From decimal
+$odds = $factory->fromDecimal('1.75');
+
+// From fractional  
+$odds = $factory->fromFractional(3, 4);
+
+// From moneyline
+$odds = $factory->fromMoneyline('-133');
 ```
 
-* Convert to other odds
+### With Odds Ladder
+
 ```php
-/**
-* Prints '5/2'
-*/
-$fractional = $odd->toFractional()->value();
-print_r($fractional);
+use Praetorian\Formatter\Odds\Utils\OddsLadder;
 
-/**
-* Prints '+250'
-*/
-$moneyline = $odd->toMoneyline()->value();
-print_r($moneyline);
+$oddsLadder = new OddsLadder();
+$factory = new OddsFactory($oddsLadder);
+
+$odds = $factory->fromDecimal('2.00');
+echo $odds->getFractional(); // Uses odds ladder lookup
 ```
+
+### Custom Odds Ladder
+
+```php
+use Praetorian\Formatter\Odds\Utils\OddsLadder;
+
+class MyCustomLadder extends OddsLadder
+{
+    protected function getLadder(): array
+    {
+        return [
+            '1.50' => 'evens',
+            '2.00' => '1/1',
+            '3.00' => '2/1',
+        ];
+    }
+}
+
+$factory = new OddsFactory(new MyCustomLadder());
+$odds = $factory->fromDecimal('1.90');
+echo $odds->getFractional(); // "evens"
+```
+
+## Migration from v1.x
+
+See [STRING_DECIMAL_GUIDE.md](STRING_DECIMAL_GUIDE.md) for detailed migration instructions.
+
+**Key Changes:**
+- Use `OddsFactory` instead of individual odd classes
+- Pass decimals as strings: `'2.50'` instead of `2.50`
+- All return values are strings for precision
+- Single `Odds` object contains all formats
+
+## Documentation
+
+- [String Decimal Guide](STRING_DECIMAL_GUIDE.md) - Precision and migration
+- [NEW_API.md](NEW_API.md) - Complete API documentation
 
 ## License
 
-This is an open-sourced software licensed under the [MIT license](https://github.com/alexsabdev/convrtr/blob/master/LICENSE).
+This is an open-sourced software licensed under the [MIT license](LICENSE).

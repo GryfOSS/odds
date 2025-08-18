@@ -12,33 +12,35 @@ use Praetorian\Formatter\Odds\Exception\InvalidPriceException;
 final class Odds
 {
     private const DECIMAL_PRECISION = 2;
+    private const SCALE_FACTOR = 100; // For 2 decimal places
 
-    private readonly float $decimal;
+    private readonly string $decimal;
     private readonly string $fractional;
     private readonly string $moneyline;
-    private readonly float $probability;
+    private readonly string $probability;
 
     /**
-     * @param float $decimal The decimal odds value
+     * @param string $decimal The decimal odds value as string (e.g., "2.50")
      * @param string $fractional The fractional odds value (e.g., "1/2")
      * @param string $moneyline The moneyline odds value (e.g., "+100" or "-150")
      */
-    public function __construct(float $decimal, string $fractional, string $moneyline)
+    public function __construct(string $decimal, string $fractional, string $moneyline)
     {
-        if ($decimal < 1.0) {
-            throw new InvalidPriceException(sprintf('Invalid decimal value provided: %F. Min value: 1.0', $decimal));
+        // Validate decimal format
+        if (!is_numeric($decimal) || bccomp($decimal, '1.0', self::DECIMAL_PRECISION) < 0) {
+            throw new InvalidPriceException(sprintf('Invalid decimal value provided: %s. Min value: 1.0', $decimal));
         }
 
-        $this->decimal = round($decimal, self::DECIMAL_PRECISION);
+        $this->decimal = bcadd($decimal, '0', self::DECIMAL_PRECISION); // Normalize precision
         $this->fractional = $fractional;
         $this->moneyline = $moneyline;
-        $this->probability = $this->calculateProbability($decimal);
+        $this->probability = $this->calculateProbability($this->decimal);
     }
 
     /**
      * Get the decimal odds value.
      */
-    public function getDecimal(): float
+    public function getDecimal(): string
     {
         return $this->decimal;
     }
@@ -62,7 +64,7 @@ final class Odds
     /**
      * Get the calculated probability.
      */
-    public function getProbability(): float
+    public function getProbability(): string
     {
         return $this->probability;
     }
@@ -70,12 +72,14 @@ final class Odds
     /**
      * Calculate probability from decimal odds.
      */
-    private function calculateProbability(float $decimal): float
+    private function calculateProbability(string $decimal): string
     {
-        if ($decimal <= 0) {
+        if (bccomp($decimal, '0', self::DECIMAL_PRECISION) <= 0) {
             throw new InvalidPriceException('Decimal odds must be greater than 0');
         }
 
-        return 1.0 / $decimal;
+        // probability = 1 / decimal odds
+        // Using bcmath for precision: 1 / decimal * 100 for percentage
+        return bcmul(bcdiv('1', $decimal, 10), '100', self::DECIMAL_PRECISION);
     }
 }
