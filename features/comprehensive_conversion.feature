@@ -41,7 +41,7 @@ Feature: Comprehensive Conversion Testing
       | 5/1        | 6.00    | +500      |
       | 10/1       | 11.00   | +1000     |
 
-  Scenario: Batch moneyline to decimal conversion  
+  Scenario: Batch moneyline to decimal conversion
     Given I test the following moneyline to decimal conversions:
       | moneyline | decimal | fractional |
       | 0         | 1.00    | 0/1        |

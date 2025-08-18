@@ -6,7 +6,7 @@ Feature: Basic Odds Conversion
   Background:
     Given I have an odds factory
 
-  Scenario: Convert decimal to fractional and moneyline (evens)
+  Scenario: Convert decimal to fractional and moneyline (1/1)
     When I create odds from decimal "2.00"
     Then the decimal odds should be "2.00"
     And the fractional odds should be "1/1"

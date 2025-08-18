@@ -10,18 +10,18 @@ Feature: Odds Ladder Integration
     And the fractional odds should be "1/2"
     And the fractional odds should match the "standard" ladder expectations
 
-  Scenario: Custom odds ladder with evens
+  Scenario: Custom odds ladder with 1/1
     Given I have an odds factory with custom odds ladder
     When I create odds from decimal "2.00"
     Then the decimal odds should be "2.00"
-    And the fractional odds should be "evens"
+    And the fractional odds should be "1/1"
     And the fractional odds should match the "custom" ladder expectations
 
   Scenario: Custom odds ladder below threshold
     Given I have an odds factory with custom odds ladder
     When I create odds from decimal "1.90"
     Then the decimal odds should be "1.90"
-    And the fractional odds should be "evens"
+    And the fractional odds should be "1/1"
     And the fractional odds should match the "custom" ladder expectations
 
   Scenario: Utils odds ladder conversion
@@ -70,7 +70,7 @@ Feature: Odds Ladder Integration
       | 1.25    | 1/4        |
       | 1.33    | 1/3        |
       | 1.50    | 1/2        |
-      | 2.00    | evens      |
+      | 2.00    | 1/1        |
       | 2.50    | 3/2        |
       | 3.00    | 2/1        |
       | 4.00    | 3/1        |

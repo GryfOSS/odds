@@ -27,7 +27,7 @@ class CustomOddsLadderTest extends TestCase
         $this->assertEquals('1/4', $this->customOddsLadder->decimalToFractional('1.25'));
         $this->assertEquals('1/3', $this->customOddsLadder->decimalToFractional('1.33'));
         $this->assertEquals('1/2', $this->customOddsLadder->decimalToFractional('1.50'));
-        $this->assertEquals('evens', $this->customOddsLadder->decimalToFractional('2.00'));
+        $this->assertEquals('1/1', $this->customOddsLadder->decimalToFractional('2.00'));
         $this->assertEquals('3/2', $this->customOddsLadder->decimalToFractional('2.50'));
         $this->assertEquals('2/1', $this->customOddsLadder->decimalToFractional('3.00'));
         $this->assertEquals('3/1', $this->customOddsLadder->decimalToFractional('4.00'));
@@ -50,7 +50,7 @@ class CustomOddsLadderTest extends TestCase
         $this->assertEquals('1/4', $this->customOddsLadder->decimalToFractional('1.25'));
         $this->assertEquals('1/3', $this->customOddsLadder->decimalToFractional('1.33'));
         $this->assertEquals('1/2', $this->customOddsLadder->decimalToFractional('1.50'));
-        $this->assertEquals('evens', $this->customOddsLadder->decimalToFractional('2.00'));
+        $this->assertEquals('1/1', $this->customOddsLadder->decimalToFractional('2.00'));
     }
 
     public function testDecimalToFractionalBetweenThresholds(): void
@@ -59,7 +59,7 @@ class CustomOddsLadderTest extends TestCase
         $this->assertEquals('1/4', $this->customOddsLadder->decimalToFractional('1.24'));
         $this->assertEquals('1/3', $this->customOddsLadder->decimalToFractional('1.32'));
         $this->assertEquals('1/2', $this->customOddsLadder->decimalToFractional('1.45'));
-        $this->assertEquals('evens', $this->customOddsLadder->decimalToFractional('1.90'));
+        $this->assertEquals('1/1', $this->customOddsLadder->decimalToFractional('1.90'));
         $this->assertEquals('3/2', $this->customOddsLadder->decimalToFractional('2.40'));
     }
 
@@ -89,7 +89,7 @@ class CustomOddsLadderTest extends TestCase
         $this->assertEquals('1/4', $ladder[125]);
         $this->assertEquals('1/3', $ladder[133]);
         $this->assertEquals('1/2', $ladder[150]);
-        $this->assertEquals('evens', $ladder[200]);
+        $this->assertEquals('1/1', $ladder[200]);
         $this->assertEquals('3/2', $ladder[250]);
         $this->assertEquals('2/1', $ladder[300]);
         $this->assertEquals('3/1', $ladder[400]);

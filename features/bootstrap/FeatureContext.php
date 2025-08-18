@@ -227,7 +227,7 @@ class FeatureContext implements Context
             $parts = explode('/', $row['fractional']);
             $numerator = (int)$parts[0];
             $denominator = (int)$parts[1];
-            
+
             $this->iCreateOddsFromFractional($numerator, $denominator);
             $this->theDecimalOddsShouldBe($row['decimal']);
             if (isset($row['moneyline'])) {
@@ -257,15 +257,10 @@ class FeatureContext implements Context
     {
         Assert::assertEquals($ladderType, $this->currentLadderType, "Current ladder type should match expected");
         Assert::assertNotNull($this->odds, 'Odds object should not be null');
-        
+
         // Verify that fractional odds are in expected format
         $fractional = $this->odds->getFractional();
-        if ($ladderType === 'custom' && $fractional === 'evens') {
-            // Custom ladder can return "evens" which is valid
-            Assert::assertEquals('evens', $fractional, 'Custom ladder should return "evens" for appropriate odds');
-        } else {
-            Assert::assertMatchesRegularExpression('/^\d+\/\d+$/', $fractional, 'Fractional should be in format n/d');
-        }
+        Assert::assertMatchesRegularExpression('/^\d+\/\d+$/', $fractional, 'Fractional should be in format n/d');
     }
 
     /**

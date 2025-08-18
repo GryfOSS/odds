@@ -140,10 +140,10 @@ class OddsFactoryTest extends TestCase
         $customLadder = new CustomOddsLadder();
         $factory = new OddsFactory($customLadder);
 
-        $odds = $factory->fromDecimal('1.90'); // This should find threshold 2.0 and return 'evens'
+        $odds = $factory->fromDecimal('1.90'); // This should find threshold 2.0 and return '1/1'
 
         $this->assertEquals('1.90', $odds->getDecimal());
-        $this->assertEquals('evens', $odds->getFractional()); // From custom ladder (1.90 <= 2.0 -> 'evens')
+        $this->assertEquals('1/1', $odds->getFractional()); // From custom ladder (1.90 <= 2.0 -> '1/1')
         $this->assertEquals('-111.11', $odds->getMoneyline());
         $this->assertEquals('52.63', $odds->getProbability());
     }
