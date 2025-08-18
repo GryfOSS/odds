@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Praetorian\Formatter\Odds\OddsFactory;
-use Praetorian\Formatter\Odds\OddsLadder;
-use Praetorian\Formatter\Odds\CustomOddsLadder;
+use GryfOSS\Odds\OddsFactory;
+use GryfOSS\Odds\OddsLadder;
+use GryfOSS\Odds\CustomOddsLadder;
 
 // Example usage of the new Odds library with dependency injection
 

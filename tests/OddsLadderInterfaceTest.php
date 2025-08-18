@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Praetorian\Tests\Formatter\Odds\Tests;
+namespace GryfOSS\Tests\Odds;
 
 use PHPUnit\Framework\TestCase;
-use Praetorian\Formatter\Odds\OddsLadderInterface;
+use GryfOSS\Odds\OddsLadderInterface;
 
 /**
  * Class OddsLadderInterfaceTest.
@@ -51,13 +51,13 @@ class OddsLadderInterfaceTest extends TestCase
     public function testConcreteClassesImplementInterface(): void
     {
         // Verify that concrete classes implement the interface
-        $standardLadder = new \Praetorian\Formatter\Odds\OddsLadder();
+        $standardLadder = new \GryfOSS\Odds\OddsLadder();
         $this->assertInstanceOf(OddsLadderInterface::class, $standardLadder);
 
-        $customLadder = new \Praetorian\Formatter\Odds\CustomOddsLadder();
+        $customLadder = new \GryfOSS\Odds\CustomOddsLadder();
         $this->assertInstanceOf(OddsLadderInterface::class, $customLadder);
 
-        $utilsLadder = new \Praetorian\Formatter\Odds\Utils\OddsLadder();
+        $utilsLadder = new \GryfOSS\Odds\Utils\OddsLadder();
         $this->assertInstanceOf(OddsLadderInterface::class, $utilsLadder);
     }
 }

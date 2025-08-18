@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Praetorian\Formatter\Odds;
+namespace GryfOSS\Odds;
 
 /**
  * Base odds ladder implementation with configurable lookup table.

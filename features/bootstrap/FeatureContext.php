@@ -4,12 +4,12 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\Assert;
-use Praetorian\Formatter\Odds\Odds;
-use Praetorian\Formatter\Odds\OddsFactory;
-use Praetorian\Formatter\Odds\OddsLadder;
-use Praetorian\Formatter\Odds\CustomOddsLadder;
-use Praetorian\Formatter\Odds\Utils\OddsLadder as UtilsOddsLadder;
-use Praetorian\Formatter\Odds\Exception\InvalidPriceException;
+use GryfOSS\Odds\Odds;
+use GryfOSS\Odds\OddsFactory;
+use GryfOSS\Odds\OddsLadder;
+use GryfOSS\Odds\CustomOddsLadder;
+use GryfOSS\Odds\Utils\OddsLadder as UtilsOddsLadder;
+use GryfOSS\Odds\Exception\InvalidPriceException;
 
 /**
  * Defines application features from the specific context.

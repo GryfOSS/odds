@@ -2,9 +2,9 @@
 
 require_once 'vendor/autoload.php';
 
-use Praetorian\Formatter\Odds\OddsFactory;
-use Praetorian\Formatter\Odds\Utils\OddsLadder;
-use Praetorian\Formatter\Odds\CustomOddsLadder;
+use GryfOSS\Odds\OddsFactory;
+use GryfOSS\Odds\Utils\OddsLadder;
+use GryfOSS\Odds\CustomOddsLadder;
 
 echo "=== String-based Decimal Odds System ===\n\n";
 

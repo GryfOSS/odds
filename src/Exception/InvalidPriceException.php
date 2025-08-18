@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Praetorian\Formatter\Odds\Exception;
+namespace GryfOSS\Odds\Exception;
 
 use InvalidArgumentException;
 

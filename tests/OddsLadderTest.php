@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Praetorian\Tests\Formatter\Odds\Tests;
+namespace GryfOSS\Tests\Odds;
 
 use PHPUnit\Framework\TestCase;
-use Praetorian\Formatter\Odds\OddsLadder;
+use GryfOSS\Odds\OddsLadder;
 
 /**
  * Class OddsLadderTest.

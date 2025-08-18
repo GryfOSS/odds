@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Praetorian\Formatter\Odds\Utils;
+namespace GryfOSS\Odds\Utils;
 
-use Praetorian\Formatter\Odds\OddsLadderInterface;
+use GryfOSS\Odds\OddsLadderInterface;
 
 /**
  * Standard odds ladder implementation.

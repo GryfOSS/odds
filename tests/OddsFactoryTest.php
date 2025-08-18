@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Praetorian\Tests\Formatter\Odds\Tests;
+namespace GryfOSS\Tests\Odds;
 
 use PHPUnit\Framework\TestCase;
-use Praetorian\Formatter\Odds\OddsFactory;
-use Praetorian\Formatter\Odds\Utils\OddsLadder;
-use Praetorian\Formatter\Odds\CustomOddsLadder;
-use Praetorian\Formatter\Odds\Exception\InvalidPriceException;
+use GryfOSS\Odds\OddsFactory;
+use GryfOSS\Odds\Utils\OddsLadder;
+use GryfOSS\Odds\CustomOddsLadder;
+use GryfOSS\Odds\Exception\InvalidPriceException;
 
 /**
  * Class OddsFactoryTest.

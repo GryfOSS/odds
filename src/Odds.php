@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Praetorian\Formatter\Odds;
+namespace GryfOSS\Odds;
 
-use Praetorian\Formatter\Odds\Exception\InvalidPriceException;
+use GryfOSS\Odds\Exception\InvalidPriceException;
 
 /**
  * Immutable class representing odds in all supported formats.

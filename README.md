@@ -1,7 +1,7 @@
 # Odds Formatter
 
-[![Tests](https://github.com/praetoriantechnology/odds-formatter/workflows/Tests/badge.svg?branch=new_api)](https://github.com/praetoriantechnology/odds-formatter/actions)
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/praetoriantechnology/odds-formatter/actions)
+[![Tests](https://github.com/gryfoss/odds/workflows/Tests/badge.svg?branch=new_api)](https://github.com/gryfoss/odds/actions)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/gryfoss/odds/actions)
 [![PHP Version](https://img.shields.io/badge/php-8.1%2B-blue)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -35,7 +35,7 @@ This library has been completely redesigned with:
 ## Installation
 
 ```bash
-composer require praetoriantechnology/odds-formatter
+composer require gryfoss/odds
 ```
 
 ## Quick Start
@@ -43,7 +43,7 @@ composer require praetoriantechnology/odds-formatter
 ```php
 require 'vendor/autoload.php';
 
-use Praetorian\Formatter\Odds\OddsFactory;
+use GryfOSS\Odds\OddsFactory;
 
 $factory = new OddsFactory();
 
@@ -76,7 +76,7 @@ $odds = $factory->fromMoneyline('-133');
 ### With Odds Ladder
 
 ```php
-use Praetorian\Formatter\Odds\Utils\OddsLadder;
+use GryfOSS\Odds\Utils\OddsLadder;
 
 $oddsLadder = new OddsLadder();
 $factory = new OddsFactory($oddsLadder);
@@ -88,7 +88,7 @@ echo $odds->getFractional(); // Uses odds ladder lookup
 ### Custom Odds Ladder
 
 ```php
-use Praetorian\Formatter\Odds\Utils\OddsLadder;
+use GryfOSS\Odds\Utils\OddsLadder;
 
 class MyCustomLadder extends OddsLadder
 {

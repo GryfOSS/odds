@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Praetorian\Tests\Formatter\Odds\Tests;
+namespace GryfOSS\Tests\Odds;
 
 use PHPUnit\Framework\TestCase;
-use Praetorian\Formatter\Odds\CustomOddsLadder;
+use GryfOSS\Odds\CustomOddsLadder;
 
 /**
  * Class CustomOddsLadderTest.
@@ -103,8 +103,8 @@ class CustomOddsLadderTest extends TestCase
     public function testInheritanceFromOddsLadder(): void
     {
         // Verify it inherits from OddsLadder
-        $this->assertInstanceOf(\Praetorian\Formatter\Odds\OddsLadder::class, $this->customOddsLadder);
-        $this->assertInstanceOf(\Praetorian\Formatter\Odds\OddsLadderInterface::class, $this->customOddsLadder);
+        $this->assertInstanceOf(\GryfOSS\Odds\OddsLadder::class, $this->customOddsLadder);
+        $this->assertInstanceOf(\GryfOSS\Odds\OddsLadderInterface::class, $this->customOddsLadder);
     }
 
     public function testStringIntConversionsInherited(): void

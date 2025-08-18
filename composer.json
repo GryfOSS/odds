@@ -1,5 +1,5 @@
 {
-    "name": "praetoriantechnology/odds-formatter",
+    "name": "gryfoss/odds",
     "type": "library",
     "description": "PHP package for dealing with different formats of betting odds: decimal (European), fractional (British), and moneyline (American)",
     "keywords": ["betting", "odds", "decimal odd", "european odd", "fractional odd", "british odd", "american odd", "moneyline odd"],
@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Praetorian\\Formatter\\Odds\\": "src"
+            "GryfOSS\\Odds\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-          "Praetorian\\Tests\\Formatter\\Odds\\Tests\\": "tests/"
+          "GryfOSS\\Tests\\Odds\\": "tests/"
         }
     },
     "scripts": {
