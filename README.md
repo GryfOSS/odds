@@ -1,6 +1,6 @@
 # Odds Formatter
 
-[![Tests](https://github.com/gryfoss/odds/workflows/Tests/badge.svg?branch=new_api)](https://github.com/gryfoss/odds/actions)
+[![Tests](https://github.com/gryfoss/odds/workflows/Tests/badge.svg)](https://github.com/gryfoss/odds/actions)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/gryfoss/odds/actions)
 [![PHP Version](https://img.shields.io/badge/php-8.2%2B-blue)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
