@@ -28,7 +28,7 @@ This library has been completely redesigned with:
 
 ## Requirements
 
-- PHP 8.0+
+- PHP 8.2+
 - bcmath extension (standard in most installations)
 - Composer
 
