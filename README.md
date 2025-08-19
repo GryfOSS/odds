@@ -107,7 +107,7 @@ $odds = $factory->fromDecimal('1.90');
 echo $odds->getFractional(); // "evens"
 ```
 
-## Migration from v1.x
+## Migration from old `odds-formatter`.
 
 See [STRING_DECIMAL_GUIDE.md](STRING_DECIMAL_GUIDE.md) for detailed migration instructions.
 

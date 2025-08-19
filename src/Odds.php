@@ -18,6 +18,7 @@ final class Odds
     private readonly string $fractional;
     private readonly string $moneyline;
     private readonly string $probability;
+    private readonly float $probabilityFloat;
 
     /**
      * @param string $decimal The decimal odds value as string (e.g., "2.50")
@@ -35,6 +36,7 @@ final class Odds
         $this->fractional = $fractional;
         $this->moneyline = $moneyline;
         $this->probability = $this->calculateProbability($this->decimal);
+        $this->probabilityFloat = round((float)$this->probability, self::DECIMAL_PRECISION);
     }
 
     /**
@@ -67,6 +69,15 @@ final class Odds
     public function getProbability(): string
     {
         return $this->probability;
+    }
+
+    /**
+     * Get the calculated probability as a float.
+     * Useful for numerical comparisons.
+     */
+    public function getProbabilityFloat(): float
+    {
+        return $this->probabilityFloat;
     }
 
     /**

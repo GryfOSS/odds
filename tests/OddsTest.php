@@ -132,4 +132,52 @@ class OddsTest extends TestCase
         $this->assertIsString($odds->getMoneyline());
         $this->assertIsString($odds->getProbability());
     }
+
+    public function testProbabilityFloatBasic(): void
+    {
+        $odds = new Odds('2.00', '1/1', '+100');
+        $this->assertIsFloat($odds->getProbabilityFloat());
+        $this->assertEquals(50.0, $odds->getProbabilityFloat());
+
+        $odds = new Odds('4.00', '3/1', '+300');
+        $this->assertEquals(25.0, $odds->getProbabilityFloat());
+    }
+
+    public function testProbabilityFloatPrecision(): void
+    {
+        // Test that float probability matches string probability
+        $odds = new Odds('1.50', '1/2', '-200');
+        $this->assertEquals('66.67', $odds->getProbability());
+        $this->assertEquals(66.67, $odds->getProbabilityFloat());
+
+        $odds = new Odds('3.33', '233/100', '+233');
+        $this->assertEquals('30.03', $odds->getProbability());
+        $this->assertEquals(30.03, $odds->getProbabilityFloat());
+    }
+
+    public function testProbabilityFloatComparisons(): void
+    {
+        $odds1 = new Odds('1.50', '1/2', '-200'); // 66.67%
+        $odds2 = new Odds('2.00', '1/1', '+100'); // 50.00%
+        $odds3 = new Odds('4.00', '3/1', '+300'); // 25.00%
+
+        // Test comparisons
+        $this->assertTrue($odds1->getProbabilityFloat() > $odds2->getProbabilityFloat());
+        $this->assertTrue($odds2->getProbabilityFloat() > $odds3->getProbabilityFloat());
+        $this->assertTrue($odds1->getProbabilityFloat() > 50.0);
+        $this->assertTrue($odds3->getProbabilityFloat() < 30.0);
+    }
+
+    public function testProbabilityFloatEdgeCases(): void
+    {
+        // Test edge cases
+        $odds = new Odds('1.01', '1/100', '-10000');
+        $this->assertEquals(99.01, $odds->getProbabilityFloat());
+
+        $odds = new Odds('100.00', '99/1', '+9900');
+        $this->assertEquals(1.0, $odds->getProbabilityFloat());
+
+        $odds = new Odds('1.00', '0/1', '0');
+        $this->assertEquals(100.0, $odds->getProbabilityFloat());
+    }
 }

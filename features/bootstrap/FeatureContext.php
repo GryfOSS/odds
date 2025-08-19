@@ -161,6 +161,33 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then the probability float should be :expected
+     */
+    public function theProbabilityFloatShouldBe(float $expected)
+    {
+        Assert::assertNotNull($this->odds, 'Odds object should not be null');
+        Assert::assertEquals($expected, $this->odds->getProbabilityFloat());
+    }
+
+    /**
+     * @Then the probability float should be greater than :threshold
+     */
+    public function theProbabilityFloatShouldBeGreaterThan(float $threshold)
+    {
+        Assert::assertNotNull($this->odds, 'Odds object should not be null');
+        Assert::assertGreaterThan($threshold, $this->odds->getProbabilityFloat());
+    }
+
+    /**
+     * @Then the probability float should be less than :threshold
+     */
+    public function theProbabilityFloatShouldBeLessThan(float $threshold)
+    {
+        Assert::assertNotNull($this->odds, 'Odds object should not be null');
+        Assert::assertLessThan($threshold, $this->odds->getProbabilityFloat());
+    }
+
+    /**
      * @Then an InvalidPriceException should be thrown
      */
     public function anInvalidPriceExceptionShouldBeThrown()
