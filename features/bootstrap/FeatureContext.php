@@ -8,7 +8,6 @@ use GryfOSS\Odds\Odds;
 use GryfOSS\Odds\OddsFactory;
 use GryfOSS\Odds\OddsLadder;
 use GryfOSS\Odds\CustomOddsLadder;
-use GryfOSS\Odds\Utils\OddsLadder as UtilsOddsLadder;
 use GryfOSS\Odds\Exception\InvalidPriceException;
 
 /**
@@ -65,7 +64,7 @@ class FeatureContext implements Context
      */
     public function iHaveAnOddsFactoryWithUtilsOddsLadder()
     {
-        $this->oddsFactory = new OddsFactory(new UtilsOddsLadder());
+        $this->oddsFactory = new OddsFactory(new OddsLadder());
         $this->currentLadderType = 'utils';
     }
 

@@ -92,9 +92,8 @@ class OddsLadder implements OddsLadderInterface
     protected function fallbackConversion(string $decimal): string
     {
         // For high odds, return (decimal - 1)/1
-        $decimalInt = $this->stringToInt($decimal);
-        $numerator = ($decimalInt - self::SCALE_FACTOR) / self::SCALE_FACTOR;
-        return intval($numerator) . '/1';
+        $numerator = bcsub($decimal, '1', 0);
+        return $numerator . '/1';
     }
 
     /**
@@ -103,7 +102,11 @@ class OddsLadder implements OddsLadderInterface
      */
     protected function stringToInt(string $decimal): int
     {
-        return (int)round((float)$decimal * self::SCALE_FACTOR);
+        // Use bcmath to multiply by scale factor and round properly
+        $scaled = bcmul($decimal, (string)self::SCALE_FACTOR, 2);
+        // Add 0.5 for proper rounding before converting to int
+        $rounded = bcadd($scaled, '0.5', 2);
+        return (int)bcdiv($rounded, '1', 0);
     }
 
     /**

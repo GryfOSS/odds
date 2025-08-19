@@ -6,7 +6,7 @@ namespace GryfOSS\Tests\Odds;
 
 use PHPUnit\Framework\TestCase;
 use GryfOSS\Odds\OddsFactory;
-use GryfOSS\Odds\Utils\OddsLadder;
+use GryfOSS\Odds\OddsLadder;
 use GryfOSS\Odds\CustomOddsLadder;
 use GryfOSS\Odds\Exception\InvalidPriceException;
 

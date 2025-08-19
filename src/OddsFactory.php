@@ -27,7 +27,7 @@ final class OddsFactory
      */
     public function fromDecimal(string $decimal): Odds
     {
-        if (!is_numeric($decimal) || (float)$decimal < 1.0) {
+        if (!is_numeric($decimal) || bccomp($decimal, '1.0', self::DECIMAL_PRECISION) < 0) {
             throw new InvalidPriceException(sprintf('Invalid decimal value provided: %s. Min value: 1.0', $decimal));
         }
 
@@ -56,9 +56,10 @@ final class OddsFactory
         }
 
         // decimal = (numerator / denominator) + 1
-        // Using integer math: ((numerator * SCALE_FACTOR) / denominator) + SCALE_FACTOR
-        $decimalInt = (int)round(($numerator * self::SCALE_FACTOR) / $denominator) + self::SCALE_FACTOR;
-        $decimal = $this->intToString($decimalInt);
+        // Using bcmath for precise calculation
+        $decimal = bcadd(bcdiv((string)$numerator, (string)$denominator, 4), '1', 4);
+        $decimal = $this->bcRound($decimal, self::DECIMAL_PRECISION);
+        $decimalInt = $this->stringToInt($decimal);
         $fractional = $numerator . '/' . $denominator;
         $moneyline = $this->decimalToMoneyline($decimal);
 
@@ -141,24 +142,23 @@ final class OddsFactory
      */
     private function decimalToMoneyline(string $decimal): string
     {
-        $decimalInt = $this->stringToInt($decimal);
-
-        if ($decimalInt === self::SCALE_FACTOR) { // 1.00
+        if (bccomp($decimal, '1.00', self::DECIMAL_PRECISION) === 0) {
             return $this->formatMoneyline('0');
         }
 
-        if ($decimalInt >= 2 * self::SCALE_FACTOR) { // >= 2.00
+        if (bccomp($decimal, '2.00', self::DECIMAL_PRECISION) >= 0) {
             // value = 100 * (decimal - 1)
-            $valueInt = ($decimalInt - self::SCALE_FACTOR) * 100 / self::SCALE_FACTOR;
-            $value = number_format($valueInt, self::DECIMAL_PRECISION, '.', '');
+            $decimalMinus1 = bcsub($decimal, '1', 4);
+            $value = bcmul('100', $decimalMinus1, 4);
         } else {
             // value = -100 / (decimal - 1)
-            $divisor = ($decimalInt - self::SCALE_FACTOR) / self::SCALE_FACTOR;
-            $valueFloat = -100 / $divisor;
-            $value = number_format($valueFloat, self::DECIMAL_PRECISION, '.', '');
+            $decimalMinus1 = bcsub($decimal, '1', 6); // Higher precision for division
+            $value = bcdiv('-100', $decimalMinus1, 4);
         }
 
-        return $this->formatMoneyline($value);
+        // Round to 2 decimal places
+        $roundedValue = $this->bcRound($value, self::DECIMAL_PRECISION);
+        return $this->formatMoneyline($roundedValue);
     }
 
     /**
@@ -166,19 +166,18 @@ final class OddsFactory
      */
     private function moneylineToDecimal(string $moneyline): string
     {
-        $moneylineFloat = (float)$moneyline;
-
-        if ($moneylineFloat > 0) {
+        if (bccomp($moneyline, '0', 0) > 0) {
             // value = moneyline / 100 + 1
-            $valueInt = (int)round(($moneylineFloat / 100 + 1) * self::SCALE_FACTOR);
-        } elseif ($moneylineFloat < 0) {
+            $decimal = bcadd(bcdiv($moneyline, '100', 4), '1', 4); // Use higher precision
+        } elseif (bccomp($moneyline, '0', 0) < 0) {
             // value = -100 / moneyline + 1
-            $valueInt = (int)round((-100 / $moneylineFloat + 1) * self::SCALE_FACTOR);
+            $decimal = bcadd(bcdiv('-100', $moneyline, 4), '1', 4); // Use higher precision
         } else {
-            $valueInt = self::SCALE_FACTOR; // 1.00
+            $decimal = '1.00';
         }
 
-        return $this->intToString($valueInt);
+        // Round to 2 decimal places using bcmath
+        return $this->bcRound($decimal, self::DECIMAL_PRECISION);
     }
 
     /**
@@ -186,19 +185,29 @@ final class OddsFactory
      */
     private function formatMoneyline(string $value): string
     {
-        $valueFloat = (float)$value;
         $sign = '';
 
-        if ($valueFloat > 0) {
+        if (bccomp($value, '0', self::DECIMAL_PRECISION) > 0) {
             $sign = '+';
         }
 
-        // Remove unnecessary decimal places if the value is a whole number
-        if ($valueFloat == intval($valueFloat)) {
-            return $sign . intval($valueFloat);
+        // Check if it's a whole number by comparing with truncated version
+        $truncated = bcdiv($value, '1', 0);
+        if (bccomp($value, $truncated, self::DECIMAL_PRECISION) === 0) {
+            return $sign . $truncated;
         }
 
-        return $sign . number_format($valueFloat, self::DECIMAL_PRECISION, '.', '');
+        // Format with proper decimal places using bcmath
+        $rounded = $this->bcRound($value, self::DECIMAL_PRECISION);
+
+        // Ensure it has exactly 2 decimal places if it's not a whole number
+        if (strpos($rounded, '.') === false) {
+            $rounded .= '.00';
+        } elseif (strlen(substr($rounded, strpos($rounded, '.') + 1)) === 1) {
+            $rounded .= '0';
+        }
+
+        return $sign . $rounded;
     }
 
     /**
@@ -216,7 +225,11 @@ final class OddsFactory
      */
     private function stringToInt(string $decimal): int
     {
-        return (int)round((float)$decimal * self::SCALE_FACTOR);
+        // Use bcmath to multiply by scale factor and round properly
+        $scaled = bcmul($decimal, (string)self::SCALE_FACTOR, 2);
+        // Add 0.5 for proper rounding before converting to int
+        $rounded = bcadd($scaled, '0.5', 2);
+        return (int)bcdiv($rounded, '1', 0);
     }
 
     /**
@@ -226,5 +239,24 @@ final class OddsFactory
     private function intToString(int $value): string
     {
         return number_format($value / self::SCALE_FACTOR, self::DECIMAL_PRECISION, '.', '');
+    }
+
+    /**
+     * Round a bcmath number to specified decimal places.
+     */
+    private function bcRound(string $number, int $precision): string
+    {
+        $factor = bcpow('10', (string)$precision, 0);
+        $multiplied = bcmul($number, $factor, $precision + 1);
+
+        // Proper rounding for both positive and negative numbers
+        if (bccomp($multiplied, '0', $precision + 1) >= 0) {
+            $rounded = bcadd($multiplied, '0.5', $precision + 1);
+        } else {
+            $rounded = bcsub($multiplied, '0.5', $precision + 1);
+        }
+
+        $truncated = bcdiv($rounded, '1', 0);
+        return bcdiv($truncated, $factor, $precision);
     }
 }

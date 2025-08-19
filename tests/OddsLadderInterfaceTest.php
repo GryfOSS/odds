@@ -56,8 +56,5 @@ class OddsLadderInterfaceTest extends TestCase
 
         $customLadder = new \GryfOSS\Odds\CustomOddsLadder();
         $this->assertInstanceOf(OddsLadderInterface::class, $customLadder);
-
-        $utilsLadder = new \GryfOSS\Odds\Utils\OddsLadder();
-        $this->assertInstanceOf(OddsLadderInterface::class, $utilsLadder);
     }
 }

@@ -3,7 +3,7 @@
 require_once 'vendor/autoload.php';
 
 use GryfOSS\Odds\OddsFactory;
-use GryfOSS\Odds\Utils\OddsLadder;
+use GryfOSS\Odds\OddsLadder;
 use GryfOSS\Odds\CustomOddsLadder;
 
 echo "=== String-based Decimal Odds System ===\n\n";
@@ -17,6 +17,9 @@ echo "Decimal: {$odds->getDecimal()}, Fractional: {$odds->getFractional()}, Mone
 
 // 2. Standard odds ladder conversion
 $standardLadder = new OddsLadder();
+
+var_dump($standardLadder->decimalToFractional('1.025'));
+
 $factoryWithLadder = new OddsFactory($standardLadder);
 
 echo "2. Standard odds ladder conversion:\n";

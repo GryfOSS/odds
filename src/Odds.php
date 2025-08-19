@@ -27,7 +27,7 @@ final class Odds
     public function __construct(string $decimal, string $fractional, string $moneyline)
     {
         // Validate decimal format
-        if (!is_numeric($decimal) || (float)$decimal < 1.0) {
+        if (!is_numeric($decimal) || bccomp($decimal, '1.0', self::DECIMAL_PRECISION) < 0) {
             throw new InvalidPriceException(sprintf('Invalid decimal value provided: %s. Min value: 1.0', $decimal));
         }
 
@@ -75,14 +75,13 @@ final class Odds
      */
     private function calculateProbability(string $decimal): string
     {
-        // Convert to float for precise calculation
-        $decimalFloat = (float)$decimal;
-
         // probability = 1 / decimal odds * 100 (for percentage)
-        $probabilityFloat = (1 / $decimalFloat) * 100;
+        // Use higher precision for intermediate calculation and round properly
+        $probability = bcdiv('1', $decimal, 6); // High precision for intermediate calculation
+        $probabilityPercent = bcmul($probability, '100', 6);
 
-        // Return with 2 decimal places
-        return number_format($probabilityFloat, self::DECIMAL_PRECISION, '.', '');
+        // Round to 2 decimal places using bcmath
+        return $this->bcRound($probabilityPercent, self::DECIMAL_PRECISION);
     }
 
     /**
@@ -100,7 +99,11 @@ final class Odds
      */
     private function stringToInt(string $decimal): int
     {
-        return (int)round((float)$decimal * self::SCALE_FACTOR);
+        // Use bcmath to multiply by scale factor and round properly
+        $scaled = bcmul($decimal, (string)self::SCALE_FACTOR, 2);
+        // Add 0.5 for proper rounding before converting to int
+        $rounded = bcadd($scaled, '0.5', 2);
+        return (int)bcdiv($rounded, '1', 0);
     }
 
     /**
@@ -110,5 +113,24 @@ final class Odds
     private function intToString(int $value): string
     {
         return number_format($value / self::SCALE_FACTOR, self::DECIMAL_PRECISION, '.', '');
+    }
+
+    /**
+     * Round a bcmath number to specified decimal places.
+     */
+    private function bcRound(string $number, int $precision): string
+    {
+        $factor = bcpow('10', (string)$precision, 0);
+        $multiplied = bcmul($number, $factor, $precision + 1);
+
+        // Proper rounding for both positive and negative numbers
+        if (bccomp($multiplied, '0', $precision + 1) >= 0) {
+            $rounded = bcadd($multiplied, '0.5', $precision + 1);
+        } else {
+            $rounded = bcsub($multiplied, '0.5', $precision + 1);
+        }
+
+        $truncated = bcdiv($rounded, '1', 0);
+        return bcdiv($truncated, $factor, $precision);
     }
 }
